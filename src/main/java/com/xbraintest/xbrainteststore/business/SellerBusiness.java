@@ -48,7 +48,8 @@ public class SellerBusiness {
 		return mapper.toDomain(repository.save(mapper.toEntity(seller)));
 	}
 	
-	public @Transactional Seller updateSeller(Seller seller) {
+	@Transactional
+	public Seller updateSeller(Seller seller) {
 		Optional<SellerModel> sellerModelOptional = repository.findById(seller.getId());
 		if(sellerModelOptional.isPresent()) {
 			SellerModel sellerModel = sellerModelOptional.get();
