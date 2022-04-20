@@ -1,5 +1,7 @@
 package com.xbraintest.xbrainteststore.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,8 +29,14 @@ public class SellerController {
 	private SellerBusiness sellerBusiness;
 	
 	@GetMapping
-	public @ResponseBody ResponseEntity<Object> getSellers() {
-		return ResponseEntity.status(HttpStatus.OK).body(sellerBusiness.getAll());
+	public @ResponseBody ResponseEntity<Object> getSellers(
+			@RequestParam(name = "startDate", required = false) String startFilterDate) {
+		try {
+			LocalDate startDate = LocalDate.parse(startFilterDate);
+			return ResponseEntity.status(HttpStatus.OK).body(sellerBusiness.getAll(startDate));
+		} catch (DateTimeParseException err) {
+			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("INVALID START DATE");
+		}
 	}
 	
 	@PostMapping

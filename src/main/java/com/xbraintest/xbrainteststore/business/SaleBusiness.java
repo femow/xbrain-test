@@ -1,5 +1,6 @@
 package com.xbraintest.xbrainteststore.business;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +41,17 @@ public class SaleBusiness {
 			return Optional.of(mapper.toDomain(saleModel.get()));
 		}
 		return Optional.ofNullable(null);
+	}
+	
+	@Transactional
+	public List<Float[]> findALlBySellerIdPerPeriod(Long sellerId, LocalDate startFilterDate) {
+		List<Float[]> values = null;
+		if(startFilterDate != null) {
+			values = repository.findALlBySellerIdPerPeriod(sellerId, startFilterDate);
+		} else {
+			values = repository.findALlBySellerIdPerPeriod(sellerId);
+		}
+		return values;
 	}
 	
 	@Transactional

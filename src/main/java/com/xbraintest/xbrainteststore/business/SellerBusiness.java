@@ -1,5 +1,6 @@
 package com.xbraintest.xbrainteststore.business;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -10,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Component;
 
+import com.xbraintest.xbrainteststore.domain.Sale;
 import com.xbraintest.xbrainteststore.domain.Seller;
+import com.xbraintest.xbrainteststore.domain.DTO.SellerDTO;
 import com.xbraintest.xbrainteststore.mapper.SellerMapper;
 import com.xbraintest.xbrainteststore.model.SellerModel;
 import com.xbraintest.xbrainteststore.repository.SellerRepository;
@@ -22,14 +25,36 @@ public class SellerBusiness {
 	private SellerRepository repository;
 	
 	@Autowired
+	private SaleBusiness saleBusiness;
+	
+	@Autowired
 	private SellerMapper mapper;
 	
 	@Transactional
-	public List<Seller> getAll() {
-		List<Seller> locais = new ArrayList<>();
+	public List<SellerDTO> getAll(LocalDate startFilterDate) {
+		List<SellerDTO> locais = new ArrayList<>();
 		List<SellerModel> models = Streamable.of(repository.findAll()).toList();
 		for(SellerModel model : models) {
-			locais.add(mapper.toDomain(model));
+			List<Float[]> relatedSalesValues = saleBusiness.findALlBySellerIdPerPeriod(
+					model.getId(),
+					startFilterDate);
+			System.out.println(relatedSalesValues.get(0).length);
+			SellerDTO sellerDTO = new SellerDTO();
+			sellerDTO.setId(model.getId());
+			sellerDTO.setName(model.getName());
+			Float[] values = relatedSalesValues.get(0);
+			if(values[0] != null) {
+				sellerDTO.setSalesAmount(Math.round(values[0]));				
+			} else {
+				sellerDTO.setSalesAmount(0);				
+			}
+			if(values[1] != null) {
+				sellerDTO.setSalesAverage(values[1]);				
+			} else {
+				sellerDTO.setSalesAverage(0.0F);
+			}
+			
+			locais.add(sellerDTO);
 		}
 		return locais;
 	}
