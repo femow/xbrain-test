@@ -32,15 +32,31 @@ public class SellerController {
 	public @ResponseBody ResponseEntity<Object> getSellers(
 			@RequestParam(name = "startDate", required = false) String startFilterDate) {
 		try {
-			LocalDate startDate = LocalDate.parse(startFilterDate);
+			LocalDate startDate;
+			if(startFilterDate != null) {
+				startDate = LocalDate.parse(startFilterDate);
+			}
+			else {
+				startDate = null;
+			}	
 			return ResponseEntity.status(HttpStatus.OK).body(sellerBusiness.getAll(startDate));
 		} catch (DateTimeParseException err) {
 			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("INVALID START DATE");
 		}
 	}
 	
+	@GetMapping(path = "{id}")
+	public @ResponseBody ResponseEntity<Object> getSellerById(@PathVariable(value = "id") Long id) {
+        Optional<Seller> domain = sellerBusiness.getById(id);
+        if(domain.isPresent()) {
+            return ResponseEntity.status(HttpStatus.FOUND).body(domain);
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("NOT FOUND");
+	}
+	
 	@PostMapping
 	public @ResponseBody ResponseEntity<Object> addSeller(@RequestBody Seller seller) {
+		System.out.println(seller.equals(new Seller("Femow")));
 		return ResponseEntity.status(HttpStatus.CREATED).body(sellerBusiness.addSeller(seller));
 	}
 	
@@ -53,22 +69,12 @@ public class SellerController {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("NOT FOUND");
 	}
 	
-	@GetMapping(path = "{id}")
-	public @ResponseBody ResponseEntity<Object> getSellerById(@PathVariable(value = "id") Long id) {
-        Optional<Seller> domain = sellerBusiness.getById(id);
-        if(domain.isPresent()) {
-            return ResponseEntity.status(HttpStatus.FOUND).body(domain);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("NOT FOUND");
-	}
-	
 	@DeleteMapping(path = "{id}")
     public @ResponseBody ResponseEntity<Object> deleteById(@PathVariable(value = "id") Long id){
-
         Optional<Seller> domain = sellerBusiness.getById(id);
         if(domain.isPresent()) {
             sellerBusiness.deleteSeller(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("DELETE SUCCESS");
+            return ResponseEntity.status(HttpStatus.OK).body("DELETE SUCCESS");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("NOT FOUND");
     }

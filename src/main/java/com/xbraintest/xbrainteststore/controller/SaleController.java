@@ -59,7 +59,7 @@ public class SaleController {
         Optional<Sale> domain = saleBusiness.getById(id);
         if(domain.isPresent()) {
             saleBusiness.deleteSale(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("DELETE SUCCESS");
+            return ResponseEntity.status(HttpStatus.OK).body("DELETE SUCCESS");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("NOT FOUND");
     }

@@ -3,6 +3,13 @@ package com.xbraintest.xbrainteststore.domain;
 public class Seller {
 	private Long id;
 	private String name;
+	
+	public Seller() {}
+	
+	public Seller(String name) {
+		this.name = name;
+	}
+	
 	public Long getId() {
 		return id;
 	}
