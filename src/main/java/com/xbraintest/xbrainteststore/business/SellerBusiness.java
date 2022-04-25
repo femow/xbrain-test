@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Component;
 
-import com.xbraintest.xbrainteststore.domain.Sale;
 import com.xbraintest.xbrainteststore.domain.Seller;
 import com.xbraintest.xbrainteststore.domain.DTO.SellerDTO;
 import com.xbraintest.xbrainteststore.mapper.SellerMapper;
@@ -35,7 +34,7 @@ public class SellerBusiness {
 		List<SellerDTO> locais = new ArrayList<>();
 		List<SellerModel> models = Streamable.of(repository.findAll()).toList();
 		for(SellerModel model : models) {
-			List<Float[]> relatedSalesValues = saleBusiness.findALlBySellerIdPerPeriod(
+			List<Float[]> relatedSalesValues = saleBusiness.findAllBySellerIdPerPeriod(
 					model.getId(),
 					startFilterDate);
 			System.out.println(relatedSalesValues.get(0).length);
@@ -43,13 +42,9 @@ public class SellerBusiness {
 			sellerDTO.setId(model.getId());
 			sellerDTO.setName(model.getName());
 			Float[] values = relatedSalesValues.get(0);
-			if(values[0] != null) {
-				sellerDTO.setSalesAmount(Math.round(values[0]));				
-			} else {
-				sellerDTO.setSalesAmount(0);				
-			}
+			sellerDTO.setSalesAmount(Math.round(values[0]));
 			if(values[1] != null) {
-				sellerDTO.setSalesAverage(values[1]);				
+				sellerDTO.setSalesAverage(values[1]);
 			} else {
 				sellerDTO.setSalesAverage(0.0F);
 			}
@@ -60,10 +55,25 @@ public class SellerBusiness {
 	}
 	
 	@Transactional
-	public Optional<Seller> getById(Long id) {
+	public Optional<SellerDTO> getById(Long id, LocalDate startFilterDate) {
 		Optional<SellerModel> sellerModel = repository.findById(id);
 		if(sellerModel.isPresent()) {
-			return Optional.of(mapper.toDomain(sellerModel.get()));
+			SellerModel model = sellerModel.get();
+			List<Float[]> relatedSalesValues = saleBusiness.findAllBySellerIdPerPeriod(
+					model.getId(),
+					startFilterDate);
+			System.out.println(relatedSalesValues.get(0).length);
+			SellerDTO sellerDTO = new SellerDTO();
+			sellerDTO.setId(model.getId());
+			sellerDTO.setName(model.getName());
+			Float[] values = relatedSalesValues.get(0);
+			sellerDTO.setSalesAmount(Math.round(values[0]));				
+			if(values[1] != null) {
+				sellerDTO.setSalesAverage(values[1]);
+			} else {
+				sellerDTO.setSalesAverage(0.0F);
+			}
+			return Optional.of(sellerDTO);
 		}
 		return Optional.ofNullable(null);
 	}

@@ -24,7 +24,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xbraintest.xbrainteststore.business.SaleBusiness;
 import com.xbraintest.xbrainteststore.domain.Sale;
-import com.xbraintest.xbrainteststore.domain.Seller;
 
 
 @WebMvcTest(SaleController.class)

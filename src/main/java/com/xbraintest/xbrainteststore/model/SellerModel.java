@@ -3,16 +3,25 @@ package com.xbraintest.xbrainteststore.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.id.enhanced.SequenceStyleGenerator;
 
 @Entity
 @Table
 public class SellerModel {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(generator = "sellerSequenceIdGenerator")
+	@GenericGenerator(
+			name = "sellerSequenceIdGenerator", 
+	        strategy = "sequence",
+	        parameters = @Parameter(
+	                name = SequenceStyleGenerator.CONFIG_PREFER_SEQUENCE_PER_ENTITY,
+	                value = "true"))
 	@Column(name = "id_seller")
 	Long id;
 	

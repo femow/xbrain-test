@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.xbraintest.xbrainteststore.business.SellerBusiness;
 import com.xbraintest.xbrainteststore.domain.Seller;
+import com.xbraintest.xbrainteststore.domain.DTO.SellerDTO;
 
 @RestController
 @RequestMapping(path = "api/sellers")
@@ -46,12 +47,27 @@ public class SellerController {
 	}
 	
 	@GetMapping(path = "{id}")
-	public @ResponseBody ResponseEntity<Object> getSellerById(@PathVariable(value = "id") Long id) {
-        Optional<Seller> domain = sellerBusiness.getById(id);
-        if(domain.isPresent()) {
-            return ResponseEntity.status(HttpStatus.FOUND).body(domain);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("NOT FOUND");
+	public @ResponseBody ResponseEntity<Object> getSellerById(
+			@PathVariable(value = "id") Long id,
+			@RequestParam(name = "startDate", required = false) String startFilterDate) {
+		try {
+			LocalDate startDate;
+			if(startFilterDate != null) {
+				startDate = LocalDate.parse(startFilterDate);
+			}
+			else {
+				startDate = null;
+			}	
+			Optional<SellerDTO> domain = sellerBusiness.getById(id, startDate);
+	        if(domain.isPresent()) {
+	            return ResponseEntity.status(HttpStatus.FOUND).body(domain.get());
+	        }
+	        else {
+	        	return ResponseEntity.status(HttpStatus.NOT_FOUND).body("NOT FOUND");
+	        }
+		} catch (DateTimeParseException err) {
+			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("INVALID START DATE");	
+		}
 	}
 	
 	@PostMapping
@@ -71,7 +87,7 @@ public class SellerController {
 	
 	@DeleteMapping(path = "{id}")
     public @ResponseBody ResponseEntity<Object> deleteById(@PathVariable(value = "id") Long id){
-        Optional<Seller> domain = sellerBusiness.getById(id);
+        Optional<SellerDTO> domain = sellerBusiness.getById(id, null);
         if(domain.isPresent()) {
             sellerBusiness.deleteSeller(id);
             return ResponseEntity.status(HttpStatus.OK).body("DELETE SUCCESS");

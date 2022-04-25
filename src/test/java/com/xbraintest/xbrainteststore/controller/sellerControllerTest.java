@@ -84,26 +84,30 @@ public class sellerControllerTest {
 	
 	@Test
 	public void getSellers_InvalidDate() throws Exception {
-		List<SellerDTO> businessGetAllMockReturn = new ArrayList<>();
-		when(business.getAll(null)).thenReturn(businessGetAllMockReturn);
-		
 		mockMvc.perform(get(url + "?startDate=20-04-2022")).andExpect(status().isNotAcceptable());
 	}
 	
 	@Test
 	public void getSellerById() throws Exception {
-		Seller expectedSeller = new Seller("Femow");
+		SellerDTO expectedSeller = new SellerDTO();
 		expectedSeller.setId(1L);
-		Optional<Seller> optionalExpectedSeller = Optional.of(expectedSeller);	
-		when(business.getById(1L)).thenReturn(optionalExpectedSeller);
-		mockMvc.perform(get(url + "/1"))
+		expectedSeller.setName("Femow");
+		Optional<SellerDTO> optionalExpectedSeller = Optional.of(expectedSeller);	
+		when(business.getById(1L, LocalDate.of(2022, 4, 20))).thenReturn(optionalExpectedSeller);
+		mockMvc.perform(get(url + "/1?startDate=2022-04-20"))
 			.andExpect(status().isFound());
 	}
 	
 	@Test
+	public void getSellerById_InvalidDate() throws Exception {
+		mockMvc.perform(get(url + "/1?startDate=20-04-2022"))
+			.andExpect(status().isNotAcceptable());
+	}
+	
+	@Test
 	public void getSellerById_InvalidId() throws Exception {
-		Optional<Seller> optionalExpectedSeller = Optional.empty();	
-		when(business.getById(1L)).thenReturn(optionalExpectedSeller);
+		Optional<SellerDTO> optionalExpectedSeller = Optional.empty();	
+		when(business.getById(1L, null)).thenReturn(optionalExpectedSeller);
 		mockMvc.perform(get(url + "/1"))
 			.andExpect(status().isNotFound());
 	}
@@ -166,16 +170,16 @@ public class sellerControllerTest {
 	
 	@Test
 	public void deleteById() throws Exception {
-		Seller seller = new Seller("Femow");
+		SellerDTO seller = new SellerDTO();
 		seller.setId(1L);
-		when(business.getById(1L)).thenReturn(Optional.of(seller));
+		when(business.getById(1L, null)).thenReturn(Optional.of(seller));
 		mockMvc.perform(delete(url + "/1"))
 			.andExpect(status().isOk());
 	}
 	
 	@Test
 	public void deleteById_InvalidId() throws Exception {
-		when(business.getById(1L)).thenReturn(Optional.empty());
+		when(business.getById(1L, null)).thenReturn(Optional.empty());
 		mockMvc.perform(delete(url + "/1"))
 			.andExpect(status().isNotFound());
 	}

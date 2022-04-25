@@ -55,7 +55,6 @@ public class SaleController {
 	
 	@DeleteMapping(path = "{id}")
     public @ResponseBody ResponseEntity<Object> deleteById(@PathVariable(value = "id") Long id){
-
         Optional<Sale> domain = saleBusiness.getById(id);
         if(domain.isPresent()) {
             saleBusiness.deleteSale(id);

@@ -16,13 +16,13 @@ public interface SaleRepository extends CrudRepository<SaleModel, Long> {
 			+ "WHERE seller_id = :sellerId "
 			+ "AND date_of_sale >= :startFilterDate")
 	public List<Float[]>
-	findALlBySellerIdPerPeriod(
+	findAllBySellerIdPerPeriod(
 			@Param("sellerId") Long sellerId,
 			@Param("startFilterDate") LocalDate startFilterDate);
 	
 	@Query("SELECT COUNT(id), AVG(value) FROM SaleModel "
 			+ "WHERE seller_id = :sellerId ")
 	public List<Float[]>
-	findALlBySellerIdPerPeriod(
+	findAllBySellerIdPerPeriod(
 			@Param("sellerId") Long sellerId);
 }

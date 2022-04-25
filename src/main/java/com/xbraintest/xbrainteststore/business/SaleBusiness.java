@@ -44,12 +44,12 @@ public class SaleBusiness {
 	}
 	
 	@Transactional
-	public List<Float[]> findALlBySellerIdPerPeriod(Long sellerId, LocalDate startFilterDate) {
+	public List<Float[]> findAllBySellerIdPerPeriod(Long sellerId, LocalDate startFilterDate) {
 		List<Float[]> values = null;
 		if(startFilterDate != null) {
-			values = repository.findALlBySellerIdPerPeriod(sellerId, startFilterDate);
+			values = repository.findAllBySellerIdPerPeriod(sellerId, startFilterDate);
 		} else {
-			values = repository.findALlBySellerIdPerPeriod(sellerId);
+			values = repository.findAllBySellerIdPerPeriod(sellerId);
 		}
 		return values;
 	}
