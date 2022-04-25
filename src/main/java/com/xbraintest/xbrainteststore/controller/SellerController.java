@@ -72,7 +72,6 @@ public class SellerController {
 	
 	@PostMapping
 	public @ResponseBody ResponseEntity<Object> addSeller(@RequestBody Seller seller) {
-		System.out.println(seller.equals(new Seller("Femow")));
 		return ResponseEntity.status(HttpStatus.CREATED).body(sellerBusiness.addSeller(seller));
 	}
 	

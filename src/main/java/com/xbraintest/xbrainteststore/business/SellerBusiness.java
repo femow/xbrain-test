@@ -37,7 +37,6 @@ public class SellerBusiness {
 			List<Float[]> relatedSalesValues = saleBusiness.findAllBySellerIdPerPeriod(
 					model.getId(),
 					startFilterDate);
-			System.out.println(relatedSalesValues.get(0).length);
 			SellerDTO sellerDTO = new SellerDTO();
 			sellerDTO.setId(model.getId());
 			sellerDTO.setName(model.getName());
@@ -62,7 +61,6 @@ public class SellerBusiness {
 			List<Float[]> relatedSalesValues = saleBusiness.findAllBySellerIdPerPeriod(
 					model.getId(),
 					startFilterDate);
-			System.out.println(relatedSalesValues.get(0).length);
 			SellerDTO sellerDTO = new SellerDTO();
 			sellerDTO.setId(model.getId());
 			sellerDTO.setName(model.getName());
